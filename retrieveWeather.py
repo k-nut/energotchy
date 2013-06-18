@@ -37,6 +37,8 @@ def main():
     
     print clouds_value, weather_number
     
+    return clouds_value, weather_number
+    
 
 if __name__ == '__main__':
     main()
