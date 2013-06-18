@@ -7,43 +7,91 @@
 		<script src="/static/js/functions.js" type="text/javascript" charset="utf-8"></script>
 		<script src="http://code.jquery.com/jquery-1.10.0.min.js" type="text/javascript" charset="utf-8"></script>
 
+		<style>
+			#canvas_surface > img {
+				width: 100%;
+			}
+
+			.bak{
+				width:300px;
+			}
+		</style>
+
 	</head>
 	<body>
 		<h1 id="heading">Energotchy!</h1>
-		<img id="bulb" src="http://openclipart.org/image/100px/svg_to_png/6702/Romanov_Light_bulb(2)_.png" style="flaot:right;"/>
+		<img class="bak" id="line_unlit" src="/static/img/Strommast2.png" style="flaot:right;"/>
+		<img class="bak" id="line_lit" src="/static/img/Strommast3.png" style="flaot:right; display:none;"/>
+		<div id="canvas_surface" style="margin: 0 auto; width:520px; height:620px; flat:left;">
+			<!--	<canvas id="smiley" width="520" height="620">
+			</canvas>-->
+			<img id="good" src="/static/img/good.png" />
+			<img id="bad" src="/static/img/bad.png" style="display: none;"/>
+			<img id="evil" src="/static/img/evil.png" style="display: none;"/>
 
-		<div id="canvas_surface" style="margin: 0 auto; width:520px; height:620px;">
-			<canvas id="smiley" width="520" height="620">
-			</canvas>
+
 		</div>
 
 		<script type="text/javascript" charset="utf-8">
+			peak = 1;
 
 			function update() { 
 				$.getJSON("/data", function(data){
-					var consumption = parseInt(data.data.consumption);
+					var is_peak = data.data.peak;
+					switchBulb(is_peak);
+					var consumption = parseInt(data.data.consumption) * peak;
 					console.log(consumption);
-					var percentage = 0
-					if(consumption < 50){
+					var pic = $("#pic");
+					var percentage = 0;
+					$("#good").hide();
+					$("#bad").hide();
+					$("#evil").hide();
+					if(consumption < 1800){
+						$("#good").show();
 						percentage = 1;
 					}
-					else if(consumption > 50 && consumption < 1000){
+					else if(consumption > 1800 && consumption < 3000){
+						$("#bad").show();
+
 						percentage = 0.5;
 					}
 					else {
+						$("#evil").show();
+
 						percentage = 0;
 					}
-					drawSmiley(percentage);
+					//drawSmiley(percentage);
+
+
 				})
 			}
 
-			function switchBulb(){
-				var sat = $("#bulb").css("-webkit-filter");
-				if(sat.indexOf("1") > -1){
-					$("#bulb").css("-webkit-filter", "grayscale(0%)");
+			function changePeak(){
+				if (peak === 1){
+					peak = 2;	
+					$("#line_lit").show();
+					$("#line_unlit").hide();
+					console.log("peak on")
 				}
-				else{
-					$("#bulb").css("-webkit-filter", "grayscale(100%)")
+				else {
+					peak = 1;
+					$("#line_unlit").show();
+					$("#line_lit").hide();
+					console.log("peak off")
+				}
+			}
+
+			function switchBulb(state){
+				if (state == 1){
+					$("#bulb").hide();
+				}
+				else if (state == 2){
+					$("#bulb").show();
+					$("#bulb").css("-webkit-filter", "grayscale(100%)");
+				}
+				else {
+					$("#bulb").show();
+					$("#bulb").css("-webkit-filter", "grayscale(0%)")
 				}
 			}
 

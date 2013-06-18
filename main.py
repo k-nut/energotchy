@@ -27,8 +27,13 @@ def data():
                FROM public.e_metering_tbl) - interval '1 seconds';""")
 
     data = cursor.fetchone()
+
+   # data[2] *= is_peak()
+
     d = {"timestamp": str(data[1]), "consumption": data[2]}
     return jsonify(data=d)
+
+
 
 
 if __name__ == "__main__":
